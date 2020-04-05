@@ -7,8 +7,13 @@ const express = require("express"),
     scheduleRoutes = require("./routes/schedules"),
     slotRoutes = require("./routes/slots"),
     path = require("path"),
-    methodOverride = require("method-override");
+    methodOverride = require("method-override"),
+    mongoose = require("mongoose"),
+    LocalStrategy = require("passport-local"),
+    User = require("./models/user");
   
+mongoose.connect("mongodb://localhost:27017/smart_home", { useNewUrlParser: true });
+
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -24,6 +29,14 @@ app.use(require("express-session")({
 
 app.use(passport.initialize());
 app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use(function (req, res, next) {
+    res.locals.currentUser = req.user;
+    next();
+});
 
 app.use(authRoutes);
 app.use("/schedules",scheduleRoutes);
