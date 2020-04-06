@@ -2,7 +2,7 @@ const express = require("express"),
     app = express(),
     port = process.env.PORT || "8000",
     bodyParser = require("body-parser"),
-    passport = require("passport"), 
+    passport = require("passport"),
     authRoutes = require("./routes/auth"),
     scheduleRoutes = require("./routes/schedules"),
     slotRoutes = require("./routes/slots"),
@@ -11,8 +11,8 @@ const express = require("express"),
     mongoose = require("mongoose"),
     LocalStrategy = require("passport-local"),
     User = require("./models/user");
-  
-mongoose.connect("mongodb://localhost:27017/smart_home", { useNewUrlParser: true });
+
+mongoose.connect("mongodb://localhost/schedule_db", { useNewUrlParser: true });
 
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
@@ -39,7 +39,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(authRoutes);
-app.use("/schedules",scheduleRoutes);
+app.use("/schedules", scheduleRoutes);
 app.use("/schedules/:schedule_id/slots", slotRoutes);
 
 app.listen(port, () => {
