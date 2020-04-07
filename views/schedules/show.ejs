@@ -8,12 +8,19 @@
             Time: <%= slot.slot_timestamp %>
             <% if(book_option == "true"){ %>
             <a href="/schedules/<%=schedule_id%>/slots/<%= slot._id %>/edit">Book</a>
-            <% } %>
+            <% } else {%>
             <% if(slot_status !== "free"){ %>
             <p>Invitee: <%= slot.invitee.username %></p>
             <p>Description: <%= slot.description %></p>
-
-            <% } %>
+            <% }else{ %>
+                <form action="/schedules/<%= schedule_id %>/slots/<%=slot._id %>?_method=DELETE"
+                    method="POST">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-xs btn-danger" value="DELETE">
+                        
+                    </div>
+                </form>  
+            <% }} %> 
         </div>
    
     <% }});%>

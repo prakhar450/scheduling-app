@@ -19,39 +19,50 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
     var date = req.body.date.split("/");
     var time = req.body.hour
     time = time.substring(0, 2);
-    console.log(date);
-    console.log(time);
+
     var slot_timestamp = new Date(date[2] + "-" + date[0] + "-" + date[1] + "T" + time + ":00:00Z");
 
-    Schedule.findById(req.params.schedule_id, function (err, schedule) {
-        if (err) {
-            console.log(err);
-            res.redirect("/");
-        } else if(schedule.user.id.equals(req.user._id)) {
-
-            var slot = {
-                slot_timestamp: slot_timestamp,
-                slot_status: constants.FREE_SLOT
-            }
-            Slot.create(slot, function (err, slot) {
+    Schedule.findById(req.params.schedule_id)
+        .populate('slots').exec((err, schedule) => {
+            {
                 if (err) {
                     console.log(err);
-                } else {
-                    schedule.slots.push(slot);
-                    schedule.save();
-                    console.log(slot);
-                    req.flash("success", "Slot Created");
+                    res.redirect("/");
+                } else if (schedule.user.id.equals(req.user._id)) {
+                    var existing_slot = schedule.slots.filter(slot => {
+                        console.log(slot.slot_timestamp + " " + slot_timestamp);
+                        return (slot.slot_timestamp - slot_timestamp) == 0;
+                    });
+                    if (existing_slot.length > 0) {
+                        req.flash("error", "Slot Already Exists");
+                        console.log("Slot Already Exists");
+                        res.redirect("/");
+                    } else {
+                        var slot = {
+                            slot_timestamp: slot_timestamp,
+                            slot_status: constants.FREE_SLOT
+                        }
+                        Slot.create(slot, function (err, slot) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                schedule.slots.push(slot);
+                                schedule.save();
+                                req.flash("success", "Slot Created");
 
-                    res.redirect("/schedules/" + req.params.schedule_id + "?slot_status=" + constants.FREE_SLOT);
+                                res.redirect("/schedules/" + req.params.schedule_id + "?slot_status=" + constants.FREE_SLOT);
+                            }
+                        });
+                    }
+                } else {
+                    console.log("Please Edit Your Own Slots");
+                    req.flash("error", "Please Edit Your Own Slots ");
+                    redirect("/");
                 }
-            });
-        } else{
-            console.log("Please Edit Your Own Slots");
-            req.flash("error", "Please Edit Your Own Slots ");
-            redirect("/");
-        }
-    });
+            }
+        });
 });
+
 
 router.get("/:slot_id/edit", middleware.isLoggedIn, function (req, res) {
     Slot.findById(req.params.slot_id, function (err, slot) {
@@ -129,14 +140,23 @@ router.put("/:slot_id", middleware.isLoggedIn, function (req, res) {
 });
 
 router.delete("/:slot_id", middleware.isLoggedIn, function (req, res) {
-    Comment.findByIdAndRemove(req.params.slot_id, function (err) {
-        if (err) {
-            console.log("PROBLEM!");
+    Schedule.findById(req.params.schedule_id, function (err, schedule) {
+        if (req.user._id.equals(schedule.user.id)) {
+            Slot.findByIdAndRemove(req.params.slot_id, function (err) {
+                if (err) {
+                    console.log("PROBLEM!");
+                } else {
+                    req.flash("success", "DELETED");
+                    res.redirect("/");
+                }
+            })
         } else {
+            req.flash("CAN NOT DELETE SOMEONE ELSE'S SLOTS");
+            console.log("CAN NOT DELETE SOMEONE ELSE'S SLOTS");
             res.redirect("/");
         }
-    })
-    res.send("delete slot");
+
+    });
 });
 
 module.exports = router;
