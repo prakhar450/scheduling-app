@@ -1,0 +1,24 @@
+<%- include("../partials/header") %>
+<% if(slot_status === "booked"){ %>
+<div class="row">
+    <h1 style="text-align: center">Choose User</h1>
+    <div style="width: 30%; margin: 25px auto;">
+        <div class="dropdown btn-group">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                User <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <% allSchedules.forEach(function(schedule){ %>
+                <li><a href="/schedules/<%=schedule._id%>?slot_status=free"><%= schedule.user.username %></a></li>
+                <% }) %>
+            </ul>
+        </div>
+
+
+
+
+        <a href="/">Go Back</a>
+    </div>
+</div>
+<% } %>
+<%- include("../partials/footer") %>

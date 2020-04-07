@@ -2,10 +2,18 @@ var express = require("express"),
     router = express.Router(),
     passport = require("passport"),
     User = require("../models/user"),
-    middleware = require("../middleware");
+    middleware = require("../middleware"),
+    Schedule = require("../models/schedule");
 
-router.get("/", function (req, res) {
-    res.redirect("/login");
+router.get("/", middleware.isLoggedIn, function (req, res) {
+    Schedule.find({"user.id":req.user._id}, function (err, mySchedule) {
+        if (err) {
+            console.log(err);
+            res.redirect("/login")
+        } else {
+            res.render("landing", {mySchedule:mySchedule})
+        }
+    })
 });
 
 router.get("/register", function (req, res) {
@@ -20,7 +28,7 @@ router.post("/register", function (req, res) {
             return res.render("register");
         }
         passport.authenticate("local")(req, res, function () {
-            res.send(req.user)
+            res.redirect("/login")
         });
     });
 });
@@ -29,12 +37,8 @@ router.get("/login", function (req, res) {
     res.render("login");
 });
 
-router.get("/show", function (req, res) {
-    res.send(req.user);
-});
-
 router.post("/login", passport.authenticate("local", {
-    successRedirect: "/show", failureRedirect: "/login"
+    successRedirect: "/", failureRedirect: "/login"
 }), function (req, res) {
 
 });

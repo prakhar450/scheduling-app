@@ -6,6 +6,7 @@ const express = require("express"),
     authRoutes = require("./routes/auth"),
     scheduleRoutes = require("./routes/schedules"),
     slotRoutes = require("./routes/slots"),
+    flash = require("connect-flash"),
     path = require("path"),
     methodOverride = require("method-override"),
     mongoose = require("mongoose"),
@@ -20,7 +21,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(methodOverride("_method"));
-
+app.use(flash());
 app.use(require("express-session")({
     secret: "Welcome to the future",
     resave: false,
@@ -35,6 +36,8 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(function (req, res, next) {
     res.locals.currentUser = req.user;
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
     next();
 });
 

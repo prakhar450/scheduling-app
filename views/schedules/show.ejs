@@ -1,0 +1,22 @@
+<%- include("../partials/header") %>
+
+<div>
+    <a href="/">Go Back</a>
+    <%  slots.forEach(function(slot){ if(slot.slot_status === slot_status){%>
+    
+        <div class="well well-sm">
+            Time: <%= slot.slot_timestamp %>
+            <% if(book_option == "true"){ %>
+            <a href="/schedules/<%=schedule_id%>/slots/<%= slot._id %>/edit">Book</a>
+            <% } %>
+            <% if(slot_status !== "free"){ %>
+            <p>Invitee: <%= slot.invitee.username %></p>
+            <p>Description: <%= slot.description %></p>
+
+            <% } %>
+        </div>
+   
+    <% }});%>
+</div>
+
+<%- include("../partials/footer") %>

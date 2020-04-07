@@ -1,0 +1,20 @@
+<%- include("./partials/header") %>
+
+<header class="jumbotron">
+    <div class="container">
+        <h1><span></span> Welcome!</h1>
+        <p>View Or Add Slots</p>
+        <p>
+            <% if(mySchedule.length === 0){ %>
+            <a class="btn btn-primary btn-lg" href="/schedules/new">New User</a>
+            <% }  else{%>
+            <a class="btn btn-primary btn-lg" href="/schedules/<%=mySchedule[0]._id%>/slots/new">Add Available Slots</a>
+            <a class="btn btn-primary btn-lg" href="/schedules/<%=mySchedule[0]._id%>?slot_status=free">View My Free Slots</a>
+            <a class="btn btn-primary btn-lg" href="/schedules/<%=mySchedule[0]._id%>?slot_status=booked">View My Booked Slots</a>
+            <a class="btn btn-primary btn-lg" href="/schedules?slot_status=booked">Book Slot</a>
+            <% } %>
+        </p>
+    </div>
+</header>
+
+<%- include("./partials/footer") %>
