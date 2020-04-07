@@ -13,7 +13,16 @@ const express = require("express"),
     LocalStrategy = require("passport-local"),
     User = require("./models/user");
 
-mongoose.connect("mongodb://localhost/schedule_db", { useNewUrlParser: true });
+    var url = process.env.DATABASEURL || "mongodb://localhost/schedule_db"
+mongoose.connect(url, {
+        useNewUrlParser: true,
+        useCreateIndex: true
+    }).then(() => {
+        console.log('Connected to DB!');
+    }).catch(err => {
+        console.log('ERROR:', err.message);
+    });
+//mongoose.connect("mongodb://localhost/schedule_db", { useNewUrlParser: true });
 
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
