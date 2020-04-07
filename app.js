@@ -1,6 +1,6 @@
 const express = require("express"),
     app = express(),
-    port = process.env.PORT || "8000",
+    port = process.env.PORT || 8000,
     bodyParser = require("body-parser"),
     passport = require("passport"),
     authRoutes = require("./routes/auth"),
@@ -13,7 +13,7 @@ const express = require("express"),
     LocalStrategy = require("passport-local"),
     User = require("./models/user");
 
-    var url = process.env.DATABASEURL || "mongodb://localhost/schedule_db"
+var url = process.env.DATABASEURL || "mongodb://localhost/schedule_db"
 mongoose.connect(url, {
         useNewUrlParser: true,
         useCreateIndex: true
@@ -23,7 +23,6 @@ mongoose.connect(url, {
         console.log('ERROR:', err.message);
     });
 //mongoose.connect("mongodb://localhost/schedule_db", { useNewUrlParser: true });
-
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
