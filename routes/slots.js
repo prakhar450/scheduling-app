@@ -20,7 +20,7 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
     var time = req.body.hour
     time = time.substring(0, 2);
 
-    var slot_timestamp = new Date(date[2] + "-" + date[0] + "-" + date[1] + "T" + time + ":00:00Z");
+    var slot_timestamp = new Date(date[2] + "-" + date[0] + "-" + date[1] + "T" + time + ":00:00");
 
     Schedule.findById(req.params.schedule_id)
         .populate('slots').exec((err, schedule) => {
@@ -30,7 +30,6 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
                     res.redirect("/");
                 } else if (schedule.user.id.equals(req.user._id)) {
                     var existing_slot = schedule.slots.filter(slot => {
-                        console.log(slot.slot_timestamp + " " + slot_timestamp);
                         return (slot.slot_timestamp - slot_timestamp) == 0;
                     });
                     if (existing_slot.length > 0) {
