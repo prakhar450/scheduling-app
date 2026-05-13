@@ -1,52 +1,80 @@
-# scheduling-app
+# Scheduling App
 
-The scheduling app allows Users to register themselves and create their free slots. Other users can then book these slots and set up a meeting.
+A full-stack appointment scheduling application where users can create availability slots and book meetings with each other. Built with Node.js, Express, and MongoDB.
 
-## Try it out
-https://scheduling-app-prakhar.herokuapp.com/register
+## Features
+
+- User registration and authentication (Passport.js)
+- Create and manage personal schedules
+- Add, view, and delete available time slots
+- Book slots with other registered users
+- Flash notifications for user actions
+
+## Tech Stack
+
+- **Backend:** Node.js, Express
+- **Database:** MongoDB (Mongoose ODM)
+- **Auth:** Passport.js with local strategy
+- **Views:** EJS templates with partials
+- **Sessions:** express-session with flash messages
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Prerequisites
 
-The project uses NPM and MongoDB.
-To install NPM
+- Node.js
+- MongoDB
+
+### Setup
+
 ```bash
-brew update
-brew install node
-```
-To install Mongodb, please visit https://www.mongodb.com
-
-### Installing
-
-To set up the project in your local, first clone the repository.
-
-```
 git clone https://github.com/prakhar450/scheduling-app.git
-```
-In a separate terminal window, start an instance of mongod.
-
-To start the app run the following commands in a terminal:
-```
+cd scheduling-app
 npm install
+```
+
+Start MongoDB in a separate terminal:
+
+```bash
+mongod
+```
+
+Run the app:
+
+```bash
 node app.js
 ```
-Now the user has to register themselves and login to the web app.
-A new user will get an option to create a new schedule. Schedule can only be created once and will hold all the slots of the user. 
-The user will now have the option to add, view and delete their free slots. To book a slot of another user, click on 'Book Slot' and choose
-another user and click on book to set up a meeting. The booked slot will be visible in both the user's account and the respective free slot will
-be removed from their available slots.
 
-## Deployment
+### Usage
 
-The app has been deployed using Heroku cloud provider and MongoDB atlas for database cluster.
-To deploy the app using Heroku CLI, run the below commands after logging into Heroku and setting up the db cluster.
+1. Register a new account
+2. Create a schedule (one per user)
+3. Add available time slots with descriptions
+4. Other users can browse and book your available slots
+5. Booked slots appear in both users' accounts
+
+## Project Structure
+
 ```
-heroku create
-```
-```
-git push heroku master
+app.js               # Express server + middleware config
+models/
+  user.js            # User model (passport-local-mongoose)
+  schedule.js        # Schedule model (references User + Slots)
+  slot.js            # Slot model (timestamp, invitee, status)
+routes/
+  auth.js            # Registration and login routes
+  schedules.js       # Schedule CRUD
+  slots.js           # Slot management and booking
+middleware/
+  index.js           # Auth middleware
+views/               # EJS templates
+  schedules/         # Schedule views
+  slots/             # Slot views
+  partials/          # Shared components
 ```
 
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASEURL` | MongoDB connection string (defaults to localhost) |
